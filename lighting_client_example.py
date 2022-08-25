@@ -1,8 +1,8 @@
 import time
 
 import grpc
-import rero_grpc.lighting_pb2 as lpb
-import rero_grpc.lighting_pb2_grpc as lpb_grpc
+import rero_io_grpc.lighting_pb2 as lpb
+import rero_io_grpc.lighting_pb2_grpc as lpb_grpc
 
 def run():
 	with grpc.insecure_channel("localhost:50059") as channel:

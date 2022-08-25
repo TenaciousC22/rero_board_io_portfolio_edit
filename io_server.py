@@ -5,8 +5,10 @@ import RPi.GPIO as GPIO
 import time
 
 import grpc
-import rero_grpc.lighting_pb2 as lpb
-import rero_grpc.lighting_pb2_grpc as lpb_grpc
+import rero_io_grpc.lighting_pb2 as lpb
+import rero_io_grpc.lighting_pb2_grpc as lpb_grpc
+import rero_io_grpc.touch_pb2 as tpb
+import rero_io_grpc.touch_pb2_grpc as tpb_grpc
 
 
 class light_control(lpb_grpc.LightingServicer):
