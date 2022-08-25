@@ -3,11 +3,11 @@ syntax = "proto3";
 package rero;
 
 service Touch {
-	rpc GetLightingChange (TouchRequest) returns (TouchResponse) {}
+	rpc GetTouchRequest (TouchRequest) returns (TouchResponse) {}
 }
 
 message TouchRequest {
-	string name=1;
+	uint32 timeOut=1;
 }
 
 message TouchResponse {

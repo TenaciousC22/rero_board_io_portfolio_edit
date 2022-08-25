@@ -2,6 +2,9 @@
 from concurrent import futures
 import threading
 import RPi.GPIO as GPIO
+import board
+import busio
+import adafruit_mpr121
 import time
 
 import grpc
@@ -124,20 +127,81 @@ class light_control(lpb_grpc.LightingServicer):
 		self.led_pwm.ChangeDutyCycle(0)
 
 
+class touch_detection(tpb_grpc.TouchServicer):
+	def __init__(self,capacitiveTouchPowerPinID=14,capacitiveTouchSensingPinID=11,CTThreashold=60,multiTapDelay=250):
+		# Set up GPIO
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+
+		# Provide power to the breakout board
+		self.power_pin=capacitiveTouchPowerPinID
+		GPIO.setup(self.power_pin, GPIO.OUT, initial=GPIO.HIGH)
+
+		# Set up I2C, working on figuring out how to manipulate values so we can connect to different GPIO pins. I'm fairly certain you can just provide the GPIO number, but this has not been tested
+		i2c=busio.I2C(board.SCL, board.SDA)
+		self.mpr121=adafruit_mpr121.MPR121(i2c)
+		self.sense_pin=capacitiveTouchSensingPinID
+		self.capacitive_threashold=CTThreashold
+		self.mtap_delay=multiTapDelay
+
+	def GetTouchRequest(self, request, context):
+		time_out=int(round(request.timeOut*1000))
+		t_count=0
+
+		last_touch=None
+		t1=int(round(time.time()*1000))
+		flag=True
+		t_flag=True
+		while True:
+			t2=int(round(time.time()*1000))
+			val=abs(self.mpr121.baseline_data(self.sense_pin)-self.mpr121.filtered_data(self.sense_pin))
+
+			# Check for touch
+			if val>self.capacitive_threashold and flag:
+				last_touch=int(round(time.time()*1000))
+				t_count+=1
+				t_flag=False
+				flag=False
+
+			# Prevent multiple detected touches
+			if val<self.capacitive_threashold and not flag:
+				flag=True
+
+			# Need to do it this way to avoid doing math on a Nan variable
+			if last_touch!=None:
+				# check if the multi-tap delay as elapsed and return if it has
+				if int(round(time.time()*1000))>last_touch+self.mtap_delay:
+					return tpb.TouchResponse(status="Touched",count=t_count)
+
+			# Check for time out, t_flag makes sure it doesn't cut off an input
+			if abs(t1-t2)>time_out and t_flag:
+				return tpb.TouchResponse(status="Timed Out",count=t_count)
+
+	def kill_class(self):
+		GPIO.output(self.power_pin,GPIO.LOW)
+
+
 def serve():
 	# Do this for the finally statement
-	controller=light_control()
+	lController=light_control()
+	tController=touch_detection()
 	try:
-		# Max workers needs to be 1 so that there isn't any weirdness with controlling the lights
+		# Max workers for lighting needs to be 1 so that there isn't any weirdness with controlling the lights, I set it to 1 for the touch detection for simplicities sake, but you can have multiple, just be careful as weirdness can occur
 		server=grpc.server(futures.ThreadPoolExecutor(max_workers=1))
-		lpb_grpc.add_LightingServicer_to_server(controller, server)
+		lpb_grpc.add_LightingServicer_to_server(lController, server)
+		tpb_grpc.add_TouchServicer_to_server(tController, server)
 		server.add_insecure_port('[::]:50059')
+		print("Starting server...")
 		server.start()
+		print("Server running")
 		server.wait_for_termination()
 
 	finally:
-		if controller!=None:
-			controller.kill_class()
+		if lController!=None:
+			lController.kill_class()
+
+		if tController!=None:
+			tController.kill_class()
 
 if __name__=="__main__":
 	serve()

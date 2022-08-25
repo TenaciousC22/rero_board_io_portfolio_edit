@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btouch.proto\x12\x04rero\"\x1c\n\x0cTouchRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\".\n\rTouchResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\r2G\n\x05Touch\x12>\n\x11GetLightingChange\x12\x12.rero.TouchRequest\x1a\x13.rero.TouchResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0btouch.proto\x12\x04rero\"\x1f\n\x0cTouchRequest\x12\x0f\n\x07timeOut\x18\x01 \x01(\r\".\n\rTouchResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\r2E\n\x05Touch\x12<\n\x0fGetTouchRequest\x12\x12.rero.TouchRequest\x1a\x13.rero.TouchResponse\"\x00\x62\x06proto3')
 
 
 
@@ -39,9 +39,9 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _TOUCHREQUEST._serialized_start=21
-  _TOUCHREQUEST._serialized_end=49
-  _TOUCHRESPONSE._serialized_start=51
-  _TOUCHRESPONSE._serialized_end=97
-  _TOUCH._serialized_start=99
-  _TOUCH._serialized_end=170
+  _TOUCHREQUEST._serialized_end=52
+  _TOUCHRESPONSE._serialized_start=54
+  _TOUCHRESPONSE._serialized_end=100
+  _TOUCH._serialized_start=102
+  _TOUCH._serialized_end=171
 # @@protoc_insertion_point(module_scope)

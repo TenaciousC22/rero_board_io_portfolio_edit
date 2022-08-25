@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import touch_pb2 as touch__pb2
+import rero_io_grpc.touch_pb2 as touch__pb2
 
 
 class TouchStub(object):
@@ -14,8 +14,8 @@ class TouchStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetLightingChange = channel.unary_unary(
-                '/rero.Touch/GetLightingChange',
+        self.GetTouchRequest = channel.unary_unary(
+                '/rero.Touch/GetTouchRequest',
                 request_serializer=touch__pb2.TouchRequest.SerializeToString,
                 response_deserializer=touch__pb2.TouchResponse.FromString,
                 )
@@ -24,7 +24,7 @@ class TouchStub(object):
 class TouchServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetLightingChange(self, request, context):
+    def GetTouchRequest(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,8 +33,8 @@ class TouchServicer(object):
 
 def add_TouchServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetLightingChange': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetLightingChange,
+            'GetTouchRequest': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTouchRequest,
                     request_deserializer=touch__pb2.TouchRequest.FromString,
                     response_serializer=touch__pb2.TouchResponse.SerializeToString,
             ),
@@ -49,7 +49,7 @@ class Touch(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetLightingChange(request,
+    def GetTouchRequest(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,7 +59,7 @@ class Touch(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/rero.Touch/GetLightingChange',
+        return grpc.experimental.unary_unary(request, target, '/rero.Touch/GetTouchRequest',
             touch__pb2.TouchRequest.SerializeToString,
             touch__pb2.TouchResponse.FromString,
             options, channel_credentials,

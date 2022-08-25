@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import rero_grpc.lighting_pb2 as lighting__pb2
+import rero_io_grpc.lighting_pb2 as lighting__pb2
 
 
 class LightingStub(object):
