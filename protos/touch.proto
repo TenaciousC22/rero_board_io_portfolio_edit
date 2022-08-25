@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package rero;
+
+service Touch {
+	rpc GetLightingChange (TouchRequest) returns (TouchResponse) {}
+}
+
+message TouchRequest {
+	string name=1;
+}
+
+message TouchResponse {
+	string status=1;
+	uint32 count=2;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package rero;
+
+service Lighting {
+	rpc GetLightingChange (LightingRequest) returns (Status) {}
+}
+
+message LightingRequest {
+	string newState=1;
+}
+
+message Status {
+	string status=1;
+}
