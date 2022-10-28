@@ -1,5 +1,16 @@
 # ReRo Board IO gRPC Examples
-This repo contains the server used for physical IO on the Reverb Robotics board as well as examples for connecting to and executing calls using python gRPC
+This repo contains the server used for physical IO - specifically taking in capacitive touch inputs and modifying the lighting - on the Reverb Robotics custom PCB as well as examples for connecting to and executing calls using python gRPC
+
+## Key Technologies
+
+### Multi-Threading
+Multi-Threading was key for the lighting that was added to the board. Two of the lighting patterns (Blink and Pulse) required persistent updates to the value of the PWM for the LED. For this reason multi-threading was used to allow it to run in the background and have the class still accept commands to change the lighting
+
+### GPIO
+Accessing the GPIO and I2C pins on the custom PCB is required for using the capacitive touch breakout board that is used in the table-top case I designed for Reverb Robotics. GPIO and PWM are used for the lighting that was added to the board
+
+### gRPC
+This server is based on gRPC and uses it to accept commands and send responses to clients
 
 ## Dependencies
 This code requires gRPC, RPi.GPIO, and adafruit-mpr121. Install them with
@@ -11,7 +22,7 @@ sudo pip3 install adafruit-circuitpython-mpr121
 pip3 install grpcio==1.37.1
 ```
 
-The gRPC module does not have to be installed twice, however it is best practice to not run a command with sudo unless necessary, and the server needs sudo but the clients don't. For this reason we install gRPC in both the sudo and regular user scopes.
+The gRPC module does not have to be installed twice, however it is best practice to not run a command with ```sudo``` unless necessary, and the server needs sudo but the clients don't. For this reason we install gRPC in both the sudo and regular user scopes.
 
 ## Usage
 Run the server with the command ```sudo python3 io_server.py``` This code must be run with sudo as some of the harware accessing code requires super user access.
@@ -20,4 +31,4 @@ Run the server with the command ```sudo python3 io_server.py``` This code must b
 The [lighting control example](https://github.com/reverbrobotics/rero_board_io/blob/main/lighting_client_example.py) contains examples of how to set up a connection with the gRPC server and execute lighting change requests. Currently the implimented patterns are "on", "off", "blink", and "pulse". The command ```python3 lighting_client_example.py``` will execute the example and show the lighting modes and their responses, including what happens when an invalid lighting state change is requested.
 
 ### Touch Detection
-The [touch control example](https://github.com/reverbrobotics/rero_board_io/blob/main/touch_client_example.py) contains examples of how to set up a connection with the gRPC server and request a touch input. The request takes in a timeOut variable that controls how long the server waits before timing out the touch input request. There is support for multi-tap where the server can count the number of quick, consecutive taps. The command ```python3 touch_client_example.py``` runs the example file which contains two touch requests on a 10 second time out.
+The [touch control example](https://github.com/reverbrobotics/rero_board_io/blob/main/touch_client_example.py) contains examples of how to set up a connection with the gRPC server and request a touch input. The request takes in a timeOut variable that controls how long the server waits before timing out the touch input request. There is support for multi-tap where the server can count the number of quick, consecutive taps built into the normal touch detection function. The command ```python3 touch_client_example.py``` runs the example file which contains two touch requests on a 10 second time out.
